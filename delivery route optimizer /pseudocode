@@ -1,0 +1,62 @@
+ROUTE_NEAREST_NEIGHBOUR(graph, start)
+    route <- [start]
+    current <- start
+    unvisited <- all nodes except start
+ 
+    WHILE unvisited is not empty DO
+        next <- nearest unvisited node from current
+        add next to route
+        remove next from unvisited
+        current <- next
+    ENDWHILE
+ 
+    add start to route
+    return route and total distance
+```[cite: 1]
+
+### Algorithm 2: 2-Opt Refinement
+```text
+OPTIMIZE_2OPT(route, graph)
+    best_route <- route
+    best_distance <- CALCULATE_TOTAL_DISTANCE(best_route)
+    improved <- TRUE
+
+    WHILE improved IS TRUE DO
+        improved <- FALSE
+        FOR i FROM 1 TO length(best_route) - 2 DO
+            FOR k FROM i + 1 TO length(best_route) - 1 DO
+                new_route <- best_route[0...i-1] + REVERSE(best_route[i...k]) + best_route[k+1...end]
+                new_distance <- CALCULATE_TOTAL_DISTANCE(new_route)
+                
+                IF new_distance < best_distance THEN
+                    best_route <- new_route
+                    best_distance <- new_distance
+                    improved <- TRUE
+                    BREAK
+                ENDIF
+            ENDFOR
+        ENDFOR
+    ENDWHILE
+    RETURN best_route, best_distance
+```[cite: 1]
+
+### Algorithm 3: Brute Force Exact Search
+```text
+ROUTE_BRUTE_FORCE(graph, start)
+    other_nodes <- all nodes except start
+    min_distance <- INFINITY
+    best_route <- []
+
+    FOR EACH perm IN PERMUTATIONS(other_nodes) DO
+        tour <- [start] + perm + [start]
+        tour_dist <- CALCULATE_TOTAL_DISTANCE(tour)
+        IF tour_dist < min_distance THEN
+            min_distance <- tour_dist
+            best_route <- tour
+        ENDIF
+    ENDFOR
+    RETURN best_route, min_distance
+```[cite: 1]
+
+---
+
