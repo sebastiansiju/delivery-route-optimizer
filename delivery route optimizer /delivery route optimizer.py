@@ -4,7 +4,6 @@ import random
 import itertools
 from typing import List, Tuple, Dict
 
-
 # CORE LOGIC (OOP Data Structures & Algorithms)
 
 
@@ -115,7 +114,9 @@ class RoutePlanner:
         return best_route, min_distance
 
 
+# =====================================================================
 # GUI APPLICATION
+# =====================================================================
 
 class UltimateDeliveryApp:
     def __init__(self, root):
@@ -147,10 +148,11 @@ class UltimateDeliveryApp:
 
         tk.Label(left_panel, text="Route Planner", font=("Arial", 14, "bold"), fg="white", bg="#2c3e50").pack(pady=(0, 10))
         
-        tk.Button(left_panel, text="1. Set D, A, B, C Nodes", command=self.generate_locations, width=24, bg="#34495e", fg="white").pack(pady=4)
-        tk.Button(left_panel, text="2. Run Nearest Neighbour", command=self.run_nn, width=24, bg="#2980b9", fg="white").pack(pady=4)
-        tk.Button(left_panel, text="3. Apply 2-Opt Refinement", command=self.run_2opt, width=24, bg="#27ae60", fg="white").pack(pady=4)
-        tk.Button(left_panel, text="4. Run Brute Force (Exact)", command=self.run_brute_force, width=24, bg="#e67e22", fg="white").pack(pady=4)
+        # The setup button stays where it is
+        tk.Button(left_panel, text=" Set D, A, B, C Nodes", command=self.generate_locations, width=24, bg="#f9fafc", fg="#2c3e50").pack(pady=4)
+        tk.Button(left_panel, text=" Run Nearest Neighbour", command=self.run_nn, width=24, bg="#ff000d", fg="#03050a").pack(pady=(30, 4))
+        tk.Button(left_panel, text=" Apply 2-Opt Refinement", command=self.run_2opt, width=24, bg="#00e5ff", fg="#03050a").pack(pady=4)
+        tk.Button(left_panel, text=" Run Brute Force (Exact)", command=self.run_brute_force, width=24, bg="#39e622", fg="#03050a").pack(pady=4)
 
         # BOTTOM-LEFT BOX: GRAPH DISTANCES MATRIX (D, A, B, C)
         self.matrix_frame = tk.LabelFrame(left_panel, text=" Graph Distances (D, A, B, C) ", font=("Arial", 9, "bold"), fg="#f1c40f", bg="#34495e", padx=8, pady=8)
@@ -177,9 +179,9 @@ class UltimateDeliveryApp:
         self.lbl_d_d = tk.Label(self.matrix_frame, text="Depot -> Depot: 0.00 km", font=("Arial", 9, "bold"), fg="#f1c40f", bg="#34495e", anchor="w")
         self.lbl_d_d.pack(fill=tk.X, pady=(4, 0))
 
-        
+        # -------------------------------------------------------------
         # RIGHT PANEL (Split into Top Logs & Bottom-Right Comparison)
-       
+        # -------------------------------------------------------------
         right_panel = tk.Frame(self.root, bg="#f4f6f7", padx=15, pady=15)
         right_panel.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
@@ -250,7 +252,7 @@ class UltimateDeliveryApp:
 
         self.txt_output.delete("1.0", tk.END)
         self.txt_output.insert(tk.END, "Nodes Loaded: Depot (D), Customer A, Customer B, Customer C.\n\n")
-        self.txt_output.insert(tk.END, "Graph distances are set in the bottom-left corner.\n")
+        # Display the generated coordinates
         self.txt_output.insert(tk.END, "Run algorithms to see the live comparison in the bottom-right dialogue box.")
 
     def update_best_dialogue(self):
