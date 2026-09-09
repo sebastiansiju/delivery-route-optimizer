@@ -91,9 +91,6 @@ class RoutePlanner:
                         best_route = new_route
                         best_distance = new_distance
                         improved = True
-                        break
-                if improved:
-                    break
 
         return best_route, best_distance
 
