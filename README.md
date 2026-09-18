@@ -25,7 +25,7 @@ Starts at the depot and repeatedly hops to the closest unvisited node, then retu
 
 ### 2. 2-Opt Refinement — local search
 
-Takes the Nearest Neighbour tour and repeatedly reverses route segments, keeping any reversal that shortens the total distance. This untangles crossed paths. It restarts the sweep after each accepted improvement and stops when no reversal helps. **Run Nearest Neighbour first** — 2-Opt refines an existing route rather than building one.
+Takes the Nearest Neighbour tour and repeatedly reverses route segments, keeping any reversal that shortens the total distance. This untangles crossed paths. Each full sweep over every segment pair completes before the algorithm decides whether to run another sweep, and it stops once a full sweep finds no improving reversal. **Run Nearest Neighbour first** — 2-Opt refines an existing route rather than building one.
 
 ### 3. Brute Force — exact solution, O(n!)
 
@@ -61,10 +61,10 @@ Requires Python 3.8+ with Tkinter (bundled with the standard Windows and macOS i
 git clone https://github.com/sebastiansiju/delivery-route-optimizer.git
 ```
 
-Then run the script inside the `delivery route optimizer` folder:
+Then run the script inside the `delivery route optimizer ` folder (note the trailing space in the folder name):
 
 ```bash
-python "delivery route optimizer/delivery route optimizer.py"
+python "delivery route optimizer /delivery route optimizer.py"
 ```
 
 ## Usage
@@ -81,10 +81,12 @@ Distances are straight-line (Euclidean) and reported in kilometres. The depot si
 
 ```
 delivery-route-optimizer/
-├── delivery route optimizer/
+├── delivery route optimizer /        # Note: trailing space in the folder name
 │   ├── delivery route optimizer.py   # Routing engine + Tkinter GUI
 │   ├── UML diagram                   # Class diagram for the routing engine
 │   └── pseudocode                    # Pseudocode for all three algorithms
+├── tests/
+│   └── test_route_planner.py         # unittest coverage for the routing engine
 ├── README.md
 ├── LICENSE
 └── .gitignore
