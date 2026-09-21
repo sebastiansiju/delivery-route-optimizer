@@ -9,7 +9,7 @@ from typing import List, Tuple, Dict
 
 class Location:
     """Represents a delivery address with 2D coordinates."""
-    def __init__(self, loc_id: str, name: str, x: float, y: float):
+    def __init__(self, loc_id: str, name: str, x: float, y: float) -> None:
         self.loc_id = loc_id
         self.name = name
         self.x = x
@@ -21,20 +21,23 @@ class Location:
 
 class DistanceMatrix:
     """Dictionary-based lookup for pairwise distances."""
-    def __init__(self):
+    def __init__(self) -> None:
         self.locations: Dict[str, Location] = {}
         self.matrix: Dict[str, Dict[str, float]] = {}
 
     def add_location(self, loc: Location) -> None:
+        """Registers a location and gives it an empty row in the matrix."""
         self.locations[loc.loc_id] = loc
         self.matrix[loc.loc_id] = {}
 
     def add_edge(self, id1: str, id2: str) -> None:
+        """Computes and stores the symmetric distance between two locations."""
         dist = self.locations[id1].distance_to(self.locations[id2])
         self.matrix[id1][id2] = dist
         self.matrix[id2][id1] = dist
 
     def get_distance(self, u: str, v: str) -> float:
+        """Returns the stored distance between two locations, or infinity if unknown."""
         if u == v:
             return 0.0
         return self.matrix.get(u, {}).get(v, float('inf'))
@@ -42,10 +45,11 @@ class DistanceMatrix:
 
 class RoutePlanner:
     """Executes Nearest Neighbour, 2-Opt, and Brute Force TSP algorithms."""
-    def __init__(self, dist_matrix: DistanceMatrix):
+    def __init__(self, dist_matrix: DistanceMatrix) -> None:
         self.dist_matrix = dist_matrix
 
     def calculate_total_distance(self, route: List[str]) -> float:
+        """Sums the pairwise distances along a route, visited in order."""
         total = 0.0
         for i in range(len(route) - 1):
             total += self.dist_matrix.get_distance(route[i], route[i + 1])
@@ -116,7 +120,8 @@ class RoutePlanner:
 # =====================================================================
 
 class UltimateDeliveryApp:
-    def __init__(self, root):
+    """Tkinter front-end that drives RoutePlanner and displays its results."""
+    def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("502IT Problem 1: Delivery Route Optimizer")
         self.root.geometry("850x650")
@@ -136,7 +141,8 @@ class UltimateDeliveryApp:
         self.setup_ui()
         self.generate_locations()
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
+        """Builds the left control/matrix panel and the right results panel."""
         # -------------------------------------------------------------
         # LEFT PANEL
         # -------------------------------------------------------------
@@ -204,7 +210,7 @@ class UltimateDeliveryApp:
         self.lbl_best_winner = tk.Label(self.best_frame, text="★ BEST ALGORITHM: Run algorithms to compare", font=("Arial", 10, "bold"), fg="#27ae60", bg="#e8f8f5", anchor="w")
         self.lbl_best_winner.pack(fill=tk.X, pady=(6, 0))
 
-    def generate_locations(self):
+    def generate_locations(self) -> None:
         """Generates nodes for Depot (D), Customer A, Customer B, and Customer C."""
         self.dist_matrix = DistanceMatrix()
         self.planner = RoutePlanner(self.dist_matrix)
@@ -252,7 +258,7 @@ class UltimateDeliveryApp:
         # Display the generated coordinates
         self.txt_output.insert(tk.END, "Run algorithms to see the live comparison in the bottom-right dialogue box.")
 
-    def update_best_dialogue(self):
+    def update_best_dialogue(self) -> None:
         """Updates the bottom-right dialogue box with calculated distances and determines the best algorithm."""
         nn_d = self.results["Nearest Neighbour"]
         opt_d = self.results["2-Opt Refined"]
@@ -269,7 +275,7 @@ class UltimateDeliveryApp:
             best_val = valid_results[best_alg]
             self.lbl_best_winner.config(text=f"★ BEST ALGORITHM: {best_alg} ({best_val:.2f} km)", fg="#27ae60")
 
-    def run_nn(self):
+    def run_nn(self) -> None:
         """Runs Nearest Neighbour."""
         self.current_route, nn_dist = self.planner.nearest_neighbour("D")
         self.results["Nearest Neighbour"] = nn_dist
@@ -280,7 +286,7 @@ class UltimateDeliveryApp:
         self.txt_output.insert(tk.END, " -> ".join(self.current_route) + "\n\n")
         self.txt_output.insert(tk.END, f"Total Calculated Distance: {nn_dist:.2f} km\n")
 
-    def run_2opt(self):
+    def run_2opt(self) -> None:
         """Runs 2-Opt."""
         if not self.current_route:
             self.txt_output.insert(tk.END, "\n[Error] Please run Nearest Neighbour first!")
@@ -295,7 +301,7 @@ class UltimateDeliveryApp:
         self.txt_output.insert(tk.END, " -> ".join(opt_route) + "\n\n")
         self.txt_output.insert(tk.END, f"Optimized Distance: {opt_dist:.2f} km\n")
 
-    def run_brute_force(self):
+    def run_brute_force(self) -> None:
         """Runs Brute Force."""
         bf_route, bf_dist = self.planner.brute_force("D")
         self.results["Brute Force"] = bf_dist
