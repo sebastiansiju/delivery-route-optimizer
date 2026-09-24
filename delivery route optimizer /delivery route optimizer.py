@@ -4,6 +4,14 @@ import random
 import itertools
 from typing import List, Tuple, Dict
 
+# Coordinate range used when randomly placing customer locations on the map.
+MIN_COORD = 10
+MAX_COORD = 50
+
+# Default main window dimensions.
+WINDOW_WIDTH = 850
+WINDOW_HEIGHT = 650
+
 # CORE LOGIC (OOP Data Structures & Algorithms)
 
 
@@ -124,7 +132,7 @@ class UltimateDeliveryApp:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("502IT Problem 1: Delivery Route Optimizer")
-        self.root.geometry("850x650")
+        self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.root.configure(bg="#f4f6f7")
 
         self.dist_matrix = DistanceMatrix()
@@ -220,9 +228,15 @@ class UltimateDeliveryApp:
         self.results = {"Nearest Neighbour": None, "2-Opt Refined": None, "Brute Force": None}
 
         self.dist_matrix.add_location(Location("D", "Depot", 0, 0))
-        self.dist_matrix.add_location(Location("A", "Customer A", random.randint(10, 50), random.randint(10, 50)))
-        self.dist_matrix.add_location(Location("B", "Customer B", random.randint(10, 50), random.randint(10, 50)))
-        self.dist_matrix.add_location(Location("C", "Customer C", random.randint(10, 50), random.randint(10, 50)))
+        self.dist_matrix.add_location(Location(
+            "A", "Customer A", random.randint(MIN_COORD, MAX_COORD), random.randint(MIN_COORD, MAX_COORD)
+        ))
+        self.dist_matrix.add_location(Location(
+            "B", "Customer B", random.randint(MIN_COORD, MAX_COORD), random.randint(MIN_COORD, MAX_COORD)
+        ))
+        self.dist_matrix.add_location(Location(
+            "C", "Customer C", random.randint(MIN_COORD, MAX_COORD), random.randint(MIN_COORD, MAX_COORD)
+        ))
 
         ids = list(self.dist_matrix.locations.keys())
         for i in range(len(ids)):
