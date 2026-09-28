@@ -3,6 +3,7 @@
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 ![Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
+[![Tests](https://github.com/sebastiansiju/delivery-route-optimizer/actions/workflows/tests.yml/badge.svg)](https://github.com/sebastiansiju/delivery-route-optimizer/actions/workflows/tests.yml)
 
 A desktop application that solves the **Travelling Salesperson Problem (TSP)** for a small delivery round. It generates a depot and three customer locations on a 2D grid, then lets you run three different routing algorithms over the same graph and compare their results side by side.
 
@@ -87,6 +88,9 @@ delivery-route-optimizer/
 │   └── pseudocode                    # Pseudocode for all three algorithms
 ├── tests/
 │   └── test_route_planner.py         # unittest coverage for the routing engine
+├── .github/
+│   └── workflows/
+│       └── tests.yml                 # Runs the test suite on every push/PR
 ├── README.md
 ├── LICENSE
 └── .gitignore
