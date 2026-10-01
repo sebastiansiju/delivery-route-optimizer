@@ -32,7 +32,6 @@ OPTIMIZE_2OPT(route, graph)
                     best_route <- new_route
                     best_distance <- new_distance
                     improved <- TRUE
-                    BREAK
                 ENDIF
             ENDFOR
         ENDFOR

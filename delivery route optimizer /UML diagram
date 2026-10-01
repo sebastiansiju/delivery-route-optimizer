@@ -43,9 +43,6 @@
 | - results: Dict[str, float]                                 |
 +-------------------------------------------------------------+
 | + setup_ui(): void                                          |
-| + get_next_alphabetical_id(): str                           |
-| + update_matrix_display(): void                             |
-| + add_custom_location(): void                               |
 | + generate_locations(): void                                |
 | + update_best_dialogue(): void                              |
 | + run_nn(): void                                            |
