@@ -112,6 +112,18 @@ class RoutePlannerTests(unittest.TestCase):
         self._assert_valid_tour(route, set(coords), "D")
         self.assertAlmostEqual(distance, planner.calculate_total_distance(route))
 
+    def test_nearest_neighbour_raises_on_unreachable_node(self):
+        # D-A is connected, but B has no edge to anything: an incomplete
+        # graph should fail loudly instead of crashing with KeyError(None).
+        matrix = engine.DistanceMatrix()
+        matrix.add_location(engine.Location("D", "D", 0, 0))
+        matrix.add_location(engine.Location("A", "A", 1, 1))
+        matrix.add_location(engine.Location("B", "B", 2, 2))
+        matrix.add_edge("D", "A")
+        planner = engine.RoutePlanner(matrix)
+        with self.assertRaises(ValueError):
+            planner.nearest_neighbour("D")
+
     def test_optimize_2opt_never_worsens_the_route(self):
         random.seed(42)
         for _ in range(20):

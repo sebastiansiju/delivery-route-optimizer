@@ -78,7 +78,13 @@ class RoutePlanner:
                 if dist < min_dist:
                     min_dist = dist
                     nearest = candidate
-            
+
+            if nearest is None:
+                raise ValueError(
+                    f"No reachable location from '{current}'; remaining unvisited "
+                    f"nodes {sorted(unvisited)} are all at infinite distance."
+                )
+
             route.append(nearest)
             unvisited.remove(nearest)
             current = nearest
