@@ -73,7 +73,10 @@ class RoutePlanner:
         while unvisited:
             nearest = None
             min_dist = float('inf')
-            for candidate in unvisited:
+            # Iterate in sorted (not raw set) order so that a tie between
+            # two equally-near candidates is always broken the same way,
+            # instead of depending on Python's randomized string hashing.
+            for candidate in sorted(unvisited):
                 dist = self.dist_matrix.get_distance(current, candidate)
                 if dist < min_dist:
                     min_dist = dist

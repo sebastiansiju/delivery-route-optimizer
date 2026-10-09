@@ -8,7 +8,9 @@ directory being an importable package.
 import importlib.util
 import itertools
 import math
+import os
 import random
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -111,6 +113,44 @@ class RoutePlannerTests(unittest.TestCase):
         route, distance = planner.nearest_neighbour("D")
         self._assert_valid_tour(route, set(coords), "D")
         self.assertAlmostEqual(distance, planner.calculate_total_distance(route))
+
+    def test_nearest_neighbour_breaks_ties_deterministically_across_processes(self):
+        # B and C are both exactly 10 away from D, a tie that used to be
+        # broken by iterating a raw set of candidate ids. Set iteration
+        # order for strings depends on Python's per-process hash seed, so
+        # the same graph could produce a different tour in one interpreter
+        # than in the next. Run the greedy search in fresh subprocesses
+        # with different PYTHONHASHSEED values and require the same route
+        # from all of them.
+        script = (
+            "import sys; sys.path.insert(0, %r)\n"
+            "from test_route_planner import _load_module\n"
+            "engine = _load_module()\n"
+            "matrix = engine.DistanceMatrix()\n"
+            "coords = {'D': (0, 0), 'A': (100, 0), 'B': (10, 0), 'C': (0, 10)}\n"
+            "for loc_id, (x, y) in coords.items():\n"
+            "    matrix.add_location(engine.Location(loc_id, loc_id, x, y))\n"
+            "ids = list(coords.keys())\n"
+            "for i in range(len(ids)):\n"
+            "    for j in range(i + 1, len(ids)):\n"
+            "        matrix.add_edge(ids[i], ids[j])\n"
+            "planner = engine.RoutePlanner(matrix)\n"
+            "route, _ = planner.nearest_neighbour('D')\n"
+            "print(','.join(route))\n"
+        ) % str(Path(__file__).resolve().parent)
+
+        routes = set()
+        for seed in ("0", "1", "2", "3", "4"):
+            result = subprocess.run(
+                [sys.executable, "-c", script],
+                env={**os.environ, "PYTHONHASHSEED": seed},
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            routes.add(result.stdout.strip())
+        self.assertEqual(len(routes), 1, f"nearest_neighbour is non-deterministic across seeds: {routes}")
 
     def test_nearest_neighbour_raises_on_unreachable_node(self):
         # D-A is connected, but B has no edge to anything: an incomplete
