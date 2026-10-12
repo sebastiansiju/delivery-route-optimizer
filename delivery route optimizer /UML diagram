@@ -17,6 +17,7 @@
 | - matrix: Dict[str, Dict[str, float]]                       |
 +-------------------------------------------------------------+
 | + add_location(loc: Location): void                         |
+| + add_edge(id1: str, id2: str): void                        |
 | + get_distance(u: str, v: str): float                       |
 +-------------------------------------------------------------+
                                ^
