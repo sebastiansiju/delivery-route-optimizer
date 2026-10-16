@@ -179,6 +179,24 @@ class RoutePlannerTests(unittest.TestCase):
             self.assertLessEqual(opt_dist, nn_dist + 1e-9)
             self.assertAlmostEqual(opt_dist, planner.calculate_total_distance(opt_route))
 
+    def test_optimize_2opt_delta_matches_full_recalculation(self):
+        # optimize_2opt scores each candidate swap from the four boundary
+        # edges it changes (an O(1) delta) instead of rebuilding the route
+        # and resumming every leg. Applying several such deltas in a row
+        # must land on the exact same total as independently recomputing
+        # the distance of the final route from scratch, with no drift.
+        random.seed(99)
+        for _ in range(30):
+            coords = {
+                node: (random.randint(0, 50), random.randint(0, 50))
+                for node in ("D", "A", "B", "C", "E", "F", "G")
+            }
+            matrix = self._build_matrix(coords)
+            planner = engine.RoutePlanner(matrix)
+            nn_route, _ = planner.nearest_neighbour("D")
+            opt_route, opt_dist = planner.optimize_2opt(nn_route)
+            self.assertAlmostEqual(opt_dist, planner.calculate_total_distance(opt_route))
+
     def test_optimize_2opt_reaches_local_optimum(self):
         # No single reversal of the returned route should shorten it further.
         coords = {"D": (0, 0), "A": (10, 10), "B": (10, 0), "C": (0, 10)}

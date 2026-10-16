@@ -96,7 +96,18 @@ class RoutePlanner:
         return route, self.calculate_total_distance(route)
 
     def optimize_2opt(self, route: List[str]) -> Tuple[List[str], float]:
-        """2-Opt Local Search Refinement"""
+        """2-Opt Local Search Refinement
+
+        Reversing the segment route[i:k+1] only replaces the two edges at
+        its boundaries (route[i-1]->route[i] and route[k]->route[k+1]) with
+        route[i-1]->route[k] and route[i]->route[k+1]; every edge strictly
+        inside the segment is walked in the opposite direction but is
+        unchanged in length, since distances are symmetric. So the effect
+        of a candidate swap on the total distance can be scored from just
+        those four edges instead of rebuilding the route and summing every
+        leg again, which turns each swap check from O(n) into O(1) and the
+        full sweep from O(n^3) into O(n^2).
+        """
         best_route = route[:]
         best_distance = self.calculate_total_distance(best_route)
         improved = True
@@ -105,12 +116,19 @@ class RoutePlanner:
             improved = False
             for i in range(1, len(best_route) - 2):
                 for k in range(i + 1, len(best_route) - 1):
-                    new_route = best_route[:i] + best_route[i:k + 1][::-1] + best_route[k + 1:]
-                    new_distance = self.calculate_total_distance(new_route)
+                    removed = (
+                        self.dist_matrix.get_distance(best_route[i - 1], best_route[i])
+                        + self.dist_matrix.get_distance(best_route[k], best_route[k + 1])
+                    )
+                    added = (
+                        self.dist_matrix.get_distance(best_route[i - 1], best_route[k])
+                        + self.dist_matrix.get_distance(best_route[i], best_route[k + 1])
+                    )
+                    delta = added - removed
 
-                    if new_distance < best_distance:
-                        best_route = new_route
-                        best_distance = new_distance
+                    if delta < 0:
+                        best_route = best_route[:i] + best_route[i:k + 1][::-1] + best_route[k + 1:]
+                        best_distance += delta
                         improved = True
 
         return best_route, best_distance

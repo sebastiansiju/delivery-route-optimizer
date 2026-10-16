@@ -25,12 +25,17 @@ OPTIMIZE_2OPT(route, graph)
         improved <- FALSE
         FOR i FROM 1 TO length(best_route) - 2 DO
             FOR k FROM i + 1 TO length(best_route) - 1 DO
-                new_route <- best_route[0...i-1] + REVERSE(best_route[i...k]) + best_route[k+1...end]
-                new_distance <- CALCULATE_TOTAL_DISTANCE(new_route)
-                
-                IF new_distance < best_distance THEN
-                    best_route <- new_route
-                    best_distance <- new_distance
+                // Reversing best_route[i...k] only swaps the two boundary
+                // edges; every edge inside the segment keeps its length
+                // (distance is symmetric), so the move's effect on the
+                // total can be scored from just those four edges.
+                removed <- DISTANCE(best_route[i-1], best_route[i]) + DISTANCE(best_route[k], best_route[k+1])
+                added   <- DISTANCE(best_route[i-1], best_route[k]) + DISTANCE(best_route[i], best_route[k+1])
+                delta   <- added - removed
+
+                IF delta < 0 THEN
+                    best_route <- best_route[0...i-1] + REVERSE(best_route[i...k]) + best_route[k+1...end]
+                    best_distance <- best_distance + delta
                     improved <- TRUE
                 ENDIF
             ENDFOR
