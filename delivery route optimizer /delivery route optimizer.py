@@ -305,9 +305,12 @@ class UltimateDeliveryApp:
         opt_d = self.results["2-Opt Refined"]
         bf_d = self.results["Brute Force"]
 
-        self.lbl_res_nn.config(text=f"Nearest Neighbour : {nn_d:.2f} km" if nn_d else "Nearest Neighbour : Not Calculated")
-        self.lbl_res_2opt.config(text=f"2-Opt Refinement   : {opt_d:.2f} km" if opt_d else "2-Opt Refinement   : Not Calculated")
-        self.lbl_res_bf.config(text=f"Brute Force (Exact): {bf_d:.2f} km" if bf_d else "Brute Force (Exact): Not Calculated")
+        # "is not None" rather than truthiness: a calculated distance of
+        # exactly 0.0 is a real result, not a missing one, and would
+        # otherwise render as "Not Calculated" like the unset sentinel does.
+        self.lbl_res_nn.config(text=f"Nearest Neighbour : {nn_d:.2f} km" if nn_d is not None else "Nearest Neighbour : Not Calculated")
+        self.lbl_res_2opt.config(text=f"2-Opt Refinement   : {opt_d:.2f} km" if opt_d is not None else "2-Opt Refinement   : Not Calculated")
+        self.lbl_res_bf.config(text=f"Brute Force (Exact): {bf_d:.2f} km" if bf_d is not None else "Brute Force (Exact): Not Calculated")
 
         # Find the algorithm with the minimum distance
         valid_results = {k: v for k, v in self.results.items() if v is not None}
