@@ -1,8 +1,17 @@
-import tkinter as tk
+from __future__ import annotations
+
 import math
 import random
 import itertools
 from typing import List, Tuple, Dict
+
+try:
+    import tkinter as tk
+except ImportError:
+    # Lets Location/DistanceMatrix/RoutePlanner be imported and unit-tested
+    # on a Python without Tkinter installed; only building the GUI itself
+    # (UltimateDeliveryApp) requires it.
+    tk = None
 
 # Coordinate range used when randomly placing customer locations on the map.
 MIN_COORD = 10
